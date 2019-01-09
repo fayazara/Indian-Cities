@@ -11,8 +11,10 @@
 
 <body>
     <script>
+        var cityJson;
         $.getJSON("indian_cities.json", function (json) {
             console.log(json);
+            cityJson = json;
         });    
     </script>
 </body>
