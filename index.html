@@ -2,21 +2,76 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Indian Cities</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Product+Sans:100,300,400,500,700">
+
 </head>
 
 <body>
-    <h2>Indian Cities</h2>
+    <style>
+        *{
+            font-family: Product sans;
+        }
+    </style>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                Indian Cities
+            </h1>
+            <div>
+                <input class="input" type="text" placeholder="Search" id="cityInput">
+            </div>
+            <div>
+                <table class="table is-striped is-fullwidth is-hoverable" id="cityTable">
+                    <thead>
+                        <tr>
+                            <th>City</th>
+                            <th>District</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+
+    <script id="table-rows" type="text/x-handlebars-template">
+        {{#each cities}}
+            <tr>
+                <td>{{ this.City }}</td>
+                <td>{{ this.District }}</td>
+                <td>{{ this.State }}</td>
+            </tr>          
+        {{/each}}
+    </script>
+
     <script>
-        var cityJson;
-        $.getJSON("indian_cities.json", function (json) {
-            console.log(json);
-            cityJson = json;
-        });    
+        var cities;
+        $.getJSON("https://raw.githubusercontent.com/fayazara/Indian-Cities/master/indian_cities.json", function (results) {
+            cities = results;
+            $(function () {
+                var toCompile = $("#table-rows").html();
+                var theTemplate = Handlebars.compile(toCompile);
+                var context = { cities };
+                var theCompiledHtml = theTemplate(context);
+                $('#tbody').html(theCompiledHtml);
+            });
+        });
+
+        $("#cityInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#cityTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
     </script>
 </body>
 
